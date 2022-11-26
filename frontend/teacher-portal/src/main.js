@@ -13,11 +13,17 @@ Vue.use(IconsPlugin)
 
 import axios from 'axios'
 
-axios.defaults.baseURL = 'https://83.221.202.194:80/'
+axios.defaults.baseURL = 'http://83.221.202.194:2500'
 
-// axios.defaults.xsrfHeaderName = "X_CSRFTOKEN"
-// axios.defaults.xsrfCookieName = "csrftoken"
-// axios.defaults.headers.common['Access-Control-Allow-Origin'] = '*';
+axios.defaults.xsrfHeaderName = "X-CSRFTOKEN"
+axios.defaults.xsrfCookieName = "csrftoken"
+
+// axios.defaults.headers.post['Content-Type'] ='application/json;charset=utf-8';
+// axios.defaults.headers.post['Access-Control-Allow-Origin'] = '*';
+
+// axios.defaults.headers.common = {
+//   'X-Requested-With': 'XMLHttpRequest',
+// };
 
 import VueCookies from 'vue-cookies'
 

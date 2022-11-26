@@ -10,14 +10,8 @@
 
             <b-collapse id="nav-collapse" is-nav>
                 <b-navbar-nav class="ml-auto">
-                    <b-nav-item :to="{name: 'login'}">Login</b-nav-item>
-                    <!-- <b-nav-item :to="{name: 'map'}">Карта</b-nav-item>
-                    <b-nav-item :to="{name: 'instruction'}">Приложение</b-nav-item>
-                    <b-nav-item :to="{name: 'volunteering'}">Волонтерство</b-nav-item>
-                    <b-nav-item :to="{name: 'about'}">О Нас</b-nav-item>
-                    <b-nav-item :to="{name: 'contacts'}">Контакты</b-nav-item>
-                    <b-nav-item v-if="!isLoggedIn" :to="{name: 'LogIn'}">Войти</b-nav-item>
-                    <b-nav-item v-if="isLoggedIn" @click="logout()"><img id="navbar-account-logout-icon" :src="logoutSVG"></b-nav-item> -->
+                    <b-nav-item v-if="!isLoggedIn" :to="{name: 'login'}">Login</b-nav-item>
+                    <b-nav-item v-if="isLoggedIn" @click="logout()"><img id="navbar-account-logout-icon" :src="logoutSVG"></b-nav-item>
                 </b-navbar-nav>
             </b-collapse>
         </b-navbar>
@@ -25,14 +19,26 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from 'vuex';
 
 export default {
     name: 'NavbarComponent',
         data: function () {
             return {
                 logoSVG: require('@/assets/logo.png'),
+                logoutSVG: require('@/assets/LogoutIcon.svg'),
             }
         },
+        computed: {
+            ...mapGetters(['isLoggedIn']),
+        },
+        methods: {
+            ...mapMutations(['removeTokens', 'verifyRefreshToken']),
+            logout() {
+                this.removeTokens()
+                this.$router.push({ name: 'login' })
+            }
+        }
     }
 </script>
 

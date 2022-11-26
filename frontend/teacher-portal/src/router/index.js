@@ -11,7 +11,10 @@ const routes = [
     {
         path: '/',
         name: 'schedule',
-        component: ScheduleView
+        component: ScheduleView,
+        meta: {
+            requiresAuth: true
+        }
     },
     {
         path: '/login',
@@ -26,12 +29,31 @@ const router = new VueRouter({
     routes
 });
 
-router.beforeEach(async (to, from, next) => {
-    if (store.state.isAuthenticated) {
-        store.commit("verifyRefreshToken")
-    }
+// router.beforeEach(async (to, from, next) => {
+//     if (store.state.isAuthenticated) {
+//         store.commit("verifyRefreshToken")
+//     } else {
+//         next({name: 'login'});
+//     }
 
-    next()
+//     next()
+// })
+
+router.beforeEach((to, from, next) => {
+    if (store.state.isAuthenticated) {
+        store.commit('verifyRefreshToken')
+    }
+    if (to.matched.some(record => record.meta.requiresAuth)) {
+      // this route requires auth, check if logged in
+      // if not, redirect to login page.
+      if (!store.state.isAuthenticated) {
+        next({ name: 'login' })
+      } else {
+        next() // go to wherever I'm going
+      }
+    } else {
+      next() // does not require auth, make sure to always call next()!
+    }
 })
 
 export default router
