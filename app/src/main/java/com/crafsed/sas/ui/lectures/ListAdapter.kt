@@ -1,4 +1,4 @@
-package com.crafsed.sas.ui
+package com.crafsed.sas.ui.lectures
 
 import android.view.LayoutInflater
 import android.view.View

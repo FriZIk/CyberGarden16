@@ -1,4 +1,4 @@
-package com.crafsed.sas.ui
+package com.crafsed.sas.ui.lectures
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -19,26 +19,30 @@ import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.Fade
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import com.crafsed.sas.R
 import com.crafsed.sas.databinding.FragmentLectureBinding
+import com.crafsed.sas.vm.MainViewModel
+import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
 
 class FragmentLecture : Fragment(R.layout.fragment_lecture) {
     private var _binding: FragmentLectureBinding? = null
 
-    // This property is only valid between onCreateView and
-    // onDestroyView.
     private val binding get() = _binding!!
+
+    private val viewModel: MainViewModel by sharedViewModel()
+
+    private val
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        Log.e("", "onCreateView: TEST")
         _binding = FragmentLectureBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -46,66 +50,102 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.textView2.setOnClickListener {
-            binding.circle.visibility = View.INVISIBLE
-            binding.progressBar2.visibility = View.VISIBLE
+        setupGreenButton()
 
-            val anim = ScaleAnimation(
-                binding.circle.scaleX,
-                binding.circle.scaleX * 0.2f,
-                binding.circle.scaleY,
-                binding.circle.scaleY * 0.2f,
-                Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-                Animation.RELATIVE_TO_SELF, 0.5f
-            )
+        setupToolbar()
+        setupDescription()
+        setupQuizes()
+        setupQuestions()
 
-            anim.fillAfter = true
-            anim.duration = 1000
-            binding.progressBar2.startAnimation(anim)
 
-            binding.textView3.setOnClickListener {
-                val anim3 = ScaleAnimation(
-                    binding.imageView3.scaleX,
-                    binding.imageView3.scaleX * 300f,
-                    binding.imageView3.scaleY,
-                    binding.circle.scaleY * 300f,
+    }
+
+    private fun setupGreenButton() {
+        if (viewModel.isLector){
+            binding.textView2.visibility = View.GONE
+            binding.circle.visibility = View.GONE
+        } else {
+            binding.textView2.setOnClickListener {
+                binding.circle.visibility = View.INVISIBLE
+                binding.progressBar2.visibility = View.VISIBLE
+
+                val anim = ScaleAnimation(
+                    binding.circle.scaleX,
+                    binding.circle.scaleX * 0.2f,
+                    binding.circle.scaleY,
+                    binding.circle.scaleY * 0.2f,
                     Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
                     Animation.RELATIVE_TO_SELF, 0.5f
                 )
 
-                anim3.fillAfter = true
+                anim.fillAfter = true
+                anim.duration = 1000
+                binding.progressBar2.startAnimation(anim)
 
-                anim3.duration = 1000
-                binding.imageView3.startAnimation(anim3)
+                binding.textView3.setOnClickListener {
+                    val anim3 = ScaleAnimation(
+                        binding.imageView3.scaleX,
+                        binding.imageView3.scaleX * 300f,
+                        binding.imageView3.scaleY,
+                        binding.circle.scaleY * 300f,
+                        Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                        Animation.RELATIVE_TO_SELF, 0.5f
+                    )
 
+                    anim3.fillAfter = true
+
+                    anim3.duration = 1000
+                    binding.imageView3.startAnimation(anim3)
+
+                    binding.textView2.visibility = View.INVISIBLE
+                    binding.textView3.visibility = View.INVISIBLE
+                    binding.progressBar2.visibility = View.INVISIBLE
+
+                    binding.textView4.visibility = View.VISIBLE
+                }
+
+                val transition: Transition = Fade()
+
+                transition.setDuration(400)
+                transition.addTarget(binding.textView2)
+
+                TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
                 binding.textView2.visibility = View.INVISIBLE
-                binding.textView3.visibility = View.INVISIBLE
-                binding.progressBar2.visibility = View.INVISIBLE
 
-                binding.textView4.visibility = View.VISIBLE
+                val transition2: Transition = Fade()
+
+                transition2.addTarget(binding.textView3)
+                transition2.setDuration(1000)
+                transition2.setStartDelay(1000)
+
+                TransitionManager.beginDelayedTransition(view as ViewGroup, transition2)
+                binding.textView3.visibility = View.VISIBLE
+
+                scanWiFi()
             }
-
-            val transition: Transition = Fade()
-
-            transition.setDuration(400)
-            transition.addTarget(binding.textView2)
-
-            TransitionManager.beginDelayedTransition(view as ViewGroup, transition)
-            binding.textView2.visibility = View.INVISIBLE
-
-            val transition2: Transition = Fade()
-
-            transition2.addTarget(binding.textView3)
-            transition2.setDuration(1000)
-            transition2.setStartDelay(1000)
-
-            TransitionManager.beginDelayedTransition(view as ViewGroup, transition2)
-            binding.textView3.visibility = View.VISIBLE
-
-            scanWiFi()
         }
+    }
+
+    private fun setupToolbar() {
+        binding.barTestName.text = viewModel.lecture.obj
+        binding.barQuestionNum.text = viewModel.lecture.lector+", "+viewModel.lecture.time+", "+viewModel.lecture.room
+    }
+
+    private fun setupQuizes() {
+        binding.testsRV.layoutManager = LinearLayoutManager(context)
+        binding.testsRV.adapter =
+    }
+
+    private fun setupDescription() {
 
     }
+
+    private fun setupQuestions() {
+
+    }
+
+
+
 
     private fun scanWiFi() {
         val wifiManager = requireContext().getSystemService(Context.WIFI_SERVICE) as WifiManager

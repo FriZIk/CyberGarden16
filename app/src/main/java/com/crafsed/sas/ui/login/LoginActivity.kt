@@ -1,4 +1,4 @@
-package com.crafsed.sas.ui
+package com.crafsed.sas.ui.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.crafsed.sas.R
 import com.crafsed.sas.databinding.ActivityLoginBinding
+import com.crafsed.sas.ui.MainActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -30,5 +31,7 @@ class LoginActivity : AppCompatActivity() {
     fun toMainFragment() {
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)
+
+        finish()
     }
 }
