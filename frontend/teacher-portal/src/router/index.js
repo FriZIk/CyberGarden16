@@ -8,6 +8,7 @@ import QuizCreate from '../views/QuizCreateView.vue'
 import QuizView from '../views/QuizView.vue'
 import MarksView from '../views/MarksView.vue'
 import AttendanceView from '../views/AttendanceView.vue'
+import InvolvementView from '../views/InvolvementView.vue'
 
 Vue.use(VueRouter)
 
@@ -32,6 +33,14 @@ const routes = [
       path: '/quizview',
       name: 'quizview',
       component: QuizView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/involvement',
+      name: 'involvement',
+      component: InvolvementView,
       meta: {
         requiresAuth: true
       }

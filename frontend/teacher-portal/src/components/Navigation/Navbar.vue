@@ -12,6 +12,7 @@
                 <b-navbar-nav id="ochko">
                     <b-nav-item :to="{name: 'grade'}">Оценки</b-nav-item>
                     <b-nav-item :to="{name: 'attendance'}">Посещаемость</b-nav-item>
+                    <b-nav-item :to="{name: 'involvement'}">Вовлеченность</b-nav-item>
                 </b-navbar-nav>
                 <b-navbar-nav class="ml-auto">
                     <b-nav-item right v-if="!isLoggedIn" :to="{name: 'login'}">Вход</b-nav-item>
