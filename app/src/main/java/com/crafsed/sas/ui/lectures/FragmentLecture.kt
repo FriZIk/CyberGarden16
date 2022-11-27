@@ -1,30 +1,29 @@
 package com.crafsed.sas.ui.lectures
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.pm.PackageManager
 import android.net.wifi.WifiManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.ScaleAnimation
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.transition.Fade
 import androidx.transition.Transition
 import androidx.transition.TransitionManager
 import com.crafsed.sas.R
+import com.crafsed.sas.data.QuizesData
 import com.crafsed.sas.databinding.FragmentLectureBinding
+import com.crafsed.sas.ui.MainActivity
+import com.crafsed.sas.ui.anon_questions.AnonQuestionsAdapter
+import com.crafsed.sas.ui.quizes.QuizRVAdapter
 import com.crafsed.sas.vm.MainViewModel
 import org.koin.androidx.viewmodel.ext.android.sharedViewModel
 
@@ -36,7 +35,8 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
 
     private val viewModel: MainViewModel by sharedViewModel()
 
-    private val
+    private val quizAdapter = QuizRVAdapter(QuizesData.TEST, this::onQuizClicked, false)
+    private val anonQuestionsAdapter = AnonQuestionsAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -45,6 +45,11 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
     ): View {
         _binding = FragmentLectureBinding.inflate(inflater, container, false)
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        viewModel.getAnonQuestions()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -57,11 +62,75 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
         setupQuizes()
         setupQuestions()
 
+        binding.codeNewBtn.setOnClickListener {
+            viewModel.sendCode(binding.codeInputET.text.toString())
+            binding.codeInputET.isEnabled = false
+            binding.codeNewBtn.isEnabled = false
+            binding.codeNewBtn.text = "Проверка..."
+            binding.textView2.isEnabled = false
+        }
 
+        viewModel.anonQuestions.observe(viewLifecycleOwner) {
+            if (it != null) {
+                anonQuestionsAdapter.data = it
+            }
+        }
+
+        binding.codeInputET.setOnFocusChangeListener { v, hasFocus ->
+            binding.codeInputET.error = null
+        }
+
+        viewModel.sendCodeResult.observe(viewLifecycleOwner) {
+            if (it == true) {
+                binding.codeNewBtn.text = "Вы отмечены"
+                binding.circle.visibility = View.GONE
+                binding.progressBar2.visibility = View.GONE
+                binding.textView2.visibility = View.GONE
+            } else {
+                binding.codeInputLayout.error = "Неправильный код"
+                binding.codeNewBtn.text = "Отправить"
+                binding.codeInputET.isEnabled = true
+                binding.codeNewBtn.isEnabled = true
+                binding.textView2.isEnabled = true
+            }
+        }
+
+        viewModel.sendStudentWiFiResult.observe(viewLifecycleOwner) {
+            if (it == true) {
+                val anim3 = ScaleAnimation(
+                    binding.imageView3.scaleX,
+                    binding.imageView3.scaleX * 250f,
+                    binding.imageView3.scaleY,
+                    binding.circle.scaleY * 250f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
+                    Animation.RELATIVE_TO_SELF, 0.5f
+                )
+
+                anim3.fillAfter = true
+
+                anim3.duration = 1000
+                binding.imageView3.startAnimation(anim3)
+
+                binding.textView2.visibility = View.INVISIBLE
+                binding.textView3.visibility = View.INVISIBLE
+                binding.progressBar2.visibility = View.INVISIBLE
+
+                binding.textView4.visibility = View.VISIBLE
+            } else {
+                binding.textView2.visibility = View.VISIBLE
+                binding.circle.visibility = View.VISIBLE
+                binding.progressBar2.visibility = View.INVISIBLE
+            }
+        }
+    }
+
+    fun onQuizClicked(quizesData: QuizesData) {
+        viewModel.currentQuiz.value = quizesData
+        (requireActivity() as MainActivity).toQuiz()
     }
 
     private fun setupGreenButton() {
-        if (viewModel.isLector){
+        if (viewModel.isLector) {
             binding.textView2.visibility = View.GONE
             binding.circle.visibility = View.GONE
         } else {
@@ -81,28 +150,6 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
                 anim.fillAfter = true
                 anim.duration = 1000
                 binding.progressBar2.startAnimation(anim)
-
-                binding.textView3.setOnClickListener {
-                    val anim3 = ScaleAnimation(
-                        binding.imageView3.scaleX,
-                        binding.imageView3.scaleX * 300f,
-                        binding.imageView3.scaleY,
-                        binding.circle.scaleY * 300f,
-                        Animation.RELATIVE_TO_SELF, 0.5f, // Pivot point of X scaling
-                        Animation.RELATIVE_TO_SELF, 0.5f
-                    )
-
-                    anim3.fillAfter = true
-
-                    anim3.duration = 1000
-                    binding.imageView3.startAnimation(anim3)
-
-                    binding.textView2.visibility = View.INVISIBLE
-                    binding.textView3.visibility = View.INVISIBLE
-                    binding.progressBar2.visibility = View.INVISIBLE
-
-                    binding.textView4.visibility = View.VISIBLE
-                }
 
                 val transition: Transition = Fade()
 
@@ -127,52 +174,77 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
     }
 
     private fun setupToolbar() {
-        binding.barTestName.text = viewModel.lecture.obj
-        binding.barQuestionNum.text = viewModel.lecture.lector+", "+viewModel.lecture.time+", "+viewModel.lecture.room
+        viewModel.lecture.observe(viewLifecycleOwner) {
+            binding.barTestName.text = it?.obj
+            binding.barQuestionNum.text =
+                "${it!!.lector}, ${it!!.timeStart} - ${it!!.timeEnd}, ${it!!.place}"
+        }
     }
 
     private fun setupQuizes() {
         binding.testsRV.layoutManager = LinearLayoutManager(context)
-        binding.testsRV.adapter =
+        binding.testsRV.adapter = quizAdapter
     }
 
     private fun setupDescription() {
-
+        viewModel.lecture.observe(viewLifecycleOwner) {
+            binding.textView6.text = it!!.description
+            if (it.place.contains("LMS", true)) {
+                binding.circle.visibility = View.GONE
+                binding.textView2.visibility = View.GONE
+            }
+        }
     }
 
     private fun setupQuestions() {
+        binding.questionsRV.layoutManager = LinearLayoutManager(context)
+        binding.questionsRV.adapter = anonQuestionsAdapter
 
+        binding.button2.setOnClickListener {
+            (requireActivity() as MainActivity).toQuestions()
+        }
+
+        viewModel.anonQuestions.observe(viewLifecycleOwner) {
+            if (it != null) {
+                anonQuestionsAdapter.data = it
+            }
+        }
+
+        viewModel.getAnonQuestions()
     }
 
+    private fun transmitWiFi() {
+        val wifiManager = requireContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
+        wifiManager.startLocalOnlyHotspot(
+            object : WifiManager.LocalOnlyHotspotCallback() {
+                override fun onStarted(reservation: WifiManager.LocalOnlyHotspotReservation?) {
+                    super.onStarted(reservation)
+                    val hotspotReservation = reservation
+                    val currentConfig = hotspotReservation?.getWifiConfiguration();
+                    Log.v(
+                        "DANG", "THE PASSWORD IS: "
+                                + currentConfig?.preSharedKey
+                                + " n SSID is : "
+                                + currentConfig?.SSID
+                    );
+                }
 
+                override fun onFailed(reason: Int) {
+                    super.onFailed(reason)
+                    println("FAIL $reason")
+                }
 
+                override fun onStopped() {
+                    super.onStopped()
+                    println("STOPPED")
+                }
+            },
+            null
+        )
+    }
 
     private fun scanWiFi() {
         val wifiManager = requireContext().getSystemService(Context.WIFI_SERVICE) as WifiManager
-//        wifiManager.startLocalOnlyHotspot(
-//            object : WifiManager.LocalOnlyHotspotCallback() {
-//                override fun onStarted(reservation: WifiManager.LocalOnlyHotspotReservation?) {
-//                    super.onStarted(reservation)
-//                    val hotspotReservation = reservation
-//                    val currentConfig = hotspotReservation?.getWifiConfiguration();
-//                    Log.v("DANG", "THE PASSWORD IS: "
-//                            + currentConfig?.preSharedKey
-//                            + " n SSID is : "
-//                            + currentConfig?.SSID);
-//                }
-//
-//                override fun onFailed(reason: Int) {
-//                    super.onFailed(reason)
-//                    println("FAIL $reason")
-//                }
-//
-//                override fun onStopped() {
-//                    super.onStopped()
-//                    println("STOPPED")
-//                }
-//            },
-//            null
-//        )
         val wifiScanReceiver = object : BroadcastReceiver() {
 
             override fun onReceive(context: Context, intent: Intent) {
@@ -199,7 +271,13 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
 
     @SuppressLint("MissingPermission")
     private fun scanSuccess(wifiManager: WifiManager) {
-        Log.e("TAG", "scanSuccess: OK", )
+        Log.e("TAG", "scanSuccess: OK")
+
+        viewModel.sendSSIDS(
+            wifiManager.scanResults.map {
+                it.SSID
+            }
+        )
         val results = wifiManager.scanResults.forEach {
             Log.e("TAG", "scanSuccess: $it")
         }
@@ -208,7 +286,7 @@ class FragmentLecture : Fragment(R.layout.fragment_lecture) {
 
     @SuppressLint("MissingPermission")
     private fun scanFailure(wifiManager: WifiManager) {
-        Log.e("TAG", "scanFailure: NOT OK", )
+        Log.e("TAG", "scanFailure: NOT OK")
         // handle failure: new scan did NOT succeed
         // consider using old scan results: these are the OLD results!
         val results = wifiManager.scanResults.forEach {

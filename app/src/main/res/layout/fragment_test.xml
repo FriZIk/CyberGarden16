@@ -4,13 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/testLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
         android:layout_height="64dp"
-        android:background="@color/white"
+        android:background="@color/main_blue"
         android:elevation="4dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,6 +28,7 @@
             android:singleLine="true"
             android:text="Тест 1"
             android:textAllCaps="true"
+            android:textColor="@color/white"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/backBar"
@@ -40,6 +42,7 @@
             android:layout_marginTop="4dp"
             android:layout_marginEnd="24dp"
             android:text="Вопрос 1"
+            android:textColor="@color/white"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/backBar"
             app:layout_constraintTop_toBottomOf="@+id/barTestName" />
@@ -48,7 +51,9 @@
             android:id="@+id/backBar"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@color/main_blue"
+            android:foregroundTint="@color/white"
+            android:tint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -65,21 +70,31 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/prevBtn"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
-            android:text="Предыдущий" />
+            android:text="Предыдущий"
+            android:textColor="@color/main_green"
+            app:cornerRadius="4dp"
+            app:strokeColor="@color/main_green_a"
+            app:strokeWidth="2dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/nextBtn"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_weight="1"
-            android:text="Следующий" />
+            android:text="Следующий"
+            android:textColor="@color/main_green"
+            app:cornerRadius="4dp"
+            app:strokeColor="@color/main_green"
+            app:strokeWidth="2dp" />
     </LinearLayout>
 
     <TextView
@@ -102,7 +117,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="03:55"
         android:textSize="20sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
         app:layout_constraintEnd_toEndOf="parent"

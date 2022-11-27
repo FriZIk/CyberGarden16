@@ -2,6 +2,7 @@ package com.crafsed.sas
 
 import android.app.Application
 import com.crafsed.sas.vm.LoginViewModel
+import com.crafsed.sas.vm.MainViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidFileProperties
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -22,4 +23,5 @@ class KoinApp: Application() {
 
 val appModule = module {
     viewModel { LoginViewModel() }
+    viewModel { MainViewModel() }
 }

@@ -8,10 +8,11 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.crafsed.sas.R
 import com.crafsed.sas.data.ListData
+import com.crafsed.sas.data.PairDescription
 import com.google.android.material.textview.MaterialTextView
 
 class ListAdapter(val clickCallback: () -> Unit ) : RecyclerView.Adapter<ListViewHolder>() {
-    var data: List<ListData> = ArrayList()
+    var data: List<PairDescription> = ArrayList()
         set(newData) {
             field = newData
             this.notifyDataSetChanged()
@@ -31,13 +32,13 @@ class ListAdapter(val clickCallback: () -> Unit ) : RecyclerView.Adapter<ListVie
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         val datum = data[position]
         holder.lector.text = datum.lector
-        holder.room.text = datum.room
-        holder.time.text = datum.time
+        holder.room.text = datum.place
+        holder.time.text = "${datum.timeStart} - ${datum.timeEnd}"
         holder.obj.text = datum.obj
-        holder.status.text = datum.status
+        holder.status.text = ":)"
 //        holder.layout.setBackgroundResource(if (!datum.isOnline) R.drawable.list_gradient_1 else R.drawable.list_gradient_2)
-        holder.time.setTextColor( holder.time.resources.getColor(if (!datum.isOnline) R.color.main_green_a else R.color.secondary_blue_a))
-        holder.room.setBackgroundColor( holder.time.resources.getColor(if (!datum.isOnline) R.color.main_green_a else R.color.secondary_blue_a))
+        holder.time.setTextColor( holder.time.resources.getColor(if (!datum.place.contains("LMS", true)) R.color.main_green_a else R.color.secondary_blue_a))
+        holder.room.setBackgroundColor( holder.time.resources.getColor(if (!datum.place.contains("LMS", true)) R.color.main_green_a else R.color.secondary_blue_a))
         holder.obj.isSelected = true;
 
         holder.layout.setOnClickListener {

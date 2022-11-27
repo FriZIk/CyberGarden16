@@ -1,9 +1,9 @@
 package com.crafsed.sas.network
 
-import com.crafsed.sas.data.AuthBody
-import com.crafsed.sas.data.AuthResponse
+import com.crafsed.sas.data.*
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
 
 /**
@@ -14,7 +14,26 @@ interface ServerApi {
     @POST("/token/")
     fun token(@Body body: AuthBody): Call<AuthResponse>
 
+    @POST("/getmyschedule/")
+    fun schedule(@Body body: ScheduleBody): Call<ListData>
 
+    @POST("/studentcheckin/")
+    fun checkinCode(@Body body: StudentCheckinBody): Call<String>
+
+    @POST("/studentcheckinwifi/")
+    fun studWiFi(@Body body: StudentWiFiBody): Call<String>
+
+    @POST("/setssid/")
+    fun prepodWiFi(@Body body: PrepodWiFiBody): Call<String>
+
+    @POST("/setcode/")
+    fun setCode(@Body body: CreateCodeBody): Call<String>
+
+    @GET("/getanonquestion/")
+    fun getQuestions(): Call<List<AnonQuestionData>>
+
+    @POST("/askanonquestion/")
+    fun askAnonQuestion(@Body body: AskAnonQuestionBody) : Call<String>
 
 //    @POST("/oborona/password_reset/")
 //    fun sendCode(@Body body: EmailUpdatable): Call<Unit>

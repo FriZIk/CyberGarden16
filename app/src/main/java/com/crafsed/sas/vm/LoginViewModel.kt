@@ -10,7 +10,8 @@ import kotlinx.coroutines.withContext
 
 class LoginViewModel : ViewModel() {
     val repo = ServerRepo()
-
+    val isLector = MutableLiveData<Boolean?>(null)
+    var token: String = ""
     val isLoggedIn = MutableLiveData<Boolean?>(null)
 
     fun login(email: String, password: String) {
@@ -19,7 +20,10 @@ class LoginViewModel : ViewModel() {
                 repo.login(email, password)
             }
 
-            isLoggedIn.value = response.first!=null && response.second!=null
+            isLector.value = response.lector
+            token = response.access
+
+            isLoggedIn.value = response.access.isNotBlank() && response.refresh.isNotBlank()
         }
     }
 }

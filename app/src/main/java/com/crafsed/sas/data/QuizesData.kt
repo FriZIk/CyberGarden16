@@ -1,19 +1,21 @@
 package com.crafsed.sas.data
 
-data class QuestionsData(
-    val questions: List<QuestionData>,
+data class QuizesData(
+    val questions: List<QuizQuestionData>,
     val quizName: String,
     val seconds: Int,
-    val openingTime: String
+    val id: String,
+    val openingTime: Long
 ) {
     companion object {
-        val TEST = QuestionsData(
-            seconds = 150,
-            openingTime = "09:00",
+        val TEST = listOf(QuizesData(
+            seconds = 10,
+            id = "123",
+            openingTime = System.currentTimeMillis()+1000*30,
             quizName = "Тест 1",
             questions = listOf(
-                QuestionData(
-                    number = 4,
+                QuizQuestionData(
+                    number = 1,
                     question = "Как зовут преподавателя",
                     answers = listOf(
                         "Бандергольф Штырьленгит",
@@ -21,10 +23,10 @@ data class QuestionsData(
                         "Баклажан Овервоч",
                         "Наиль Шавкятович",
                     ),
-                    type= QuestionData.QType.ONE,
+                    type= QuizQuestionData.QType.ONE,
                 ),
-                QuestionData(
-                    number = 1,
+                QuizQuestionData(
+                    number = 2,
                     question = "Сколько будет 9 умножить на 9",
                     answers = listOf(
                         "81",
@@ -32,10 +34,10 @@ data class QuestionsData(
                         "72",
                         "99",
                     ),
-                    type= QuestionData.QType.ONE,
+                    type= QuizQuestionData.QType.ONE,
                 ),
-                QuestionData(
-                    number = 2,
+                QuizQuestionData(
+                    number = 3,
                     question = "Какой набор критериев оценки игры против природы верен",
                     answers = listOf(
                         "MM, BL, S, HV",
@@ -43,15 +45,16 @@ data class QuestionsData(
                         "BM, HW, S, MM",
                         "HW, P, G, BL",
                     ),
-                    type= QuestionData.QType.MANY,
+                    type= QuizQuestionData.QType.MANY,
                 ),
-                QuestionData(
-                    number = 3,
+                QuizQuestionData(
+                    number = 4,
                     question = "Что такое Гносеология",
                     answers = emptyList(),
-                    type= QuestionData.QType.TEXT,
+                    type= QuizQuestionData.QType.TEXT,
                 )
             )
+        )
         )
     }
 }

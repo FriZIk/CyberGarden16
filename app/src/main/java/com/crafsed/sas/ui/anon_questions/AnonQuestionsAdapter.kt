@@ -26,10 +26,25 @@ class AnonQuestionsAdapter : RecyclerView.Adapter<AnonQuestionViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: AnonQuestionViewHolder, position: Int) {
-        holder.text.text = data[position].text
+        data.forEach {
+            println(it)
+        }
+
+        data[position].question.split("&").apply {
+            if (this.size == 1){
+                holder.text.text = this[0]
+                holder.header.text = "Вопрос от студента"
+            } else {
+                holder.text.text = this[1]
+                holder.header.text = this[0]
+            }
+
+
+        }
     }
 }
 
 class AnonQuestionViewHolder(viewItem: View) : RecyclerView.ViewHolder(viewItem) {
+    val header: TextView = viewItem.findViewById(R.id.themeTV)
     val text: TextView = viewItem.findViewById(R.id.questionTV)
 }

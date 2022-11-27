@@ -1,27 +1,39 @@
 package com.crafsed.sas.ui.quizes
 
+import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.crafsed.sas.R
+import com.crafsed.sas.data.QuizesData
 
-class QuizRVAdapter : RecyclerView.Adapter<QuizRVViewHolder>() {
+class QuizRVAdapter(val data: List<QuizesData>, val onClickCallback: (QuizesData) -> Unit, val isLector: Boolean) :
+    RecyclerView.Adapter<QuizRVViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): QuizRVViewHolder {
-        TODO("Not yet implemented")
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.quiz_item, parent, false)
+        return QuizRVViewHolder(view)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return data.size
     }
 
     override fun onBindViewHolder(holder: QuizRVViewHolder, position: Int) {
-        TODO("Not yet implemented")
+        holder.name.text = data[position].quizName
+        holder.layout.setOnClickListener {
+            onClickCallback(data[position])
+        }
+        if (isLector) {
+            holder.bage.text = "Открыть"
+        }
     }
 }
 
-class QuizRVViewHolder(viewItem: View) : RecyclerView.ViewHolder(viewItem){
+class QuizRVViewHolder(viewItem: View) : RecyclerView.ViewHolder(viewItem) {
     val name: TextView = viewItem.findViewById(R.id.itemTestName)
     val bage: TextView = viewItem.findViewById(R.id.itemTestBage)
-    val layout: TextView = viewItem.findViewById(R.id.itemTest)
+    val layout: CardView = viewItem.findViewById(R.id.itemTest)
 }

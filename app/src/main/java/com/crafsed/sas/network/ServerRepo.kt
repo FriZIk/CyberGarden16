@@ -1,6 +1,6 @@
 package com.crafsed.sas.network
 
-import com.crafsed.sas.data.AuthBody
+import com.crafsed.sas.data.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
@@ -17,16 +17,84 @@ class ServerRepo() {
     }
 
 
-    fun login(email: String, password: String): Pair<String?, String?> {
-        return             Pair(null, null)
-        val response = provideRetrofit().token(AuthBody(email.orEmpty(), password.orEmpty())).execute()
+    fun login(email: String, password: String): AuthResponse {
+        val response =
+            provideRetrofit().token(AuthBody(email.orEmpty(), password.orEmpty())).execute()
 
         return if (response.isSuccessful) {
-            val respToken = response.body()?.access
-            val accessToken = response.body()?.refresh
-            Pair(respToken, accessToken)
+            response.body()!!
         } else {
-            Pair(null, null)
+            AuthResponse("", "", false)
+        }
+    }
+
+    fun getSchedule(token: String): ListData? {
+        val response = provideRetrofit().schedule(ScheduleBody(token)).execute()
+
+        return if (response.isSuccessful) {
+            response.body()!!
+        } else {
+            null
+        }
+    }
+
+    fun codeCheckIn(token: String, id: String, code: String): Boolean {
+        val response = provideRetrofit().checkinCode(StudentCheckinBody(token, id, code)).execute()
+
+        return if (response.isSuccessful) {
+            response.body() == "201"
+        } else {
+            false
+        }
+    }
+
+    fun studentWiFi(token: String, id: String, ssidds: List<String>): Boolean {
+        val response = provideRetrofit().studWiFi(StudentWiFiBody(token, id, ssidds)).execute()
+
+        return if (response.isSuccessful) {
+            response.body() == "201"
+        } else {
+            false
+        }
+    }
+
+    fun prepodWiFi(token: String, id: String, ssid: String): Boolean {
+        val response = provideRetrofit().prepodWiFi(PrepodWiFiBody(token, id, ssid)).execute()
+
+        return if (response.isSuccessful) {
+            response.body() == "201"
+        } else {
+            false
+        }
+    }
+
+    fun setCode(token: String, id: String, code: String): Boolean {
+        val response = provideRetrofit().setCode(CreateCodeBody(token, id, code)).execute()
+
+        return if (response.isSuccessful) {
+            response.body() == "201"
+        } else {
+            false
+        }
+    }
+
+    fun askQuestion(token: String, id: String, question: String): Boolean {
+        val response = provideRetrofit().askAnonQuestion(AskAnonQuestionBody(token, question, id)).execute()
+
+        return if (response.isSuccessful) {
+            response.body() == "201"
+        } else {
+            false
+        }
+    }
+
+    fun getQuestions(token: String, id: String): List<AnonQuestionData>? {
+        val response = provideRetrofit().getQuestions().execute()
+
+        return if (response.isSuccessful) {
+            return response.body()!!
+        } else {
+            null
         }
     }
 }

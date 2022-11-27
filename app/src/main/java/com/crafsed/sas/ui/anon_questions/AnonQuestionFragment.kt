@@ -29,9 +29,9 @@ class AnonQuestionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.questionClose.setOnClickListener {
-            (requireActivity() as MainActivity).toList()
+            (requireActivity() as MainActivity).toListExpandBottomSheet()
         }
-        binding.sendQuestion.setOnClickListener {
+        binding.questionSend.setOnClickListener {
             send(binding.questionHeaderText.text.toString(),binding.enterQuestionET.text.toString() )
             binding.enterQuestionET.text?.clear()
             binding.questionHeaderText.text?.clear()

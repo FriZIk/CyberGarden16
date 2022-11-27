@@ -36,7 +36,7 @@ class LoginFragment() : Fragment(R.layout.login_fragment) {
         var loading = true
 
         loginViewModel.isLoggedIn.observe(viewLifecycleOwner) {
-            if (it == false) {
+            if (it == true) {
                 (requireActivity() as LoginActivity).toMainFragment()
             } else if (it == false){
                 loginError()

@@ -1,6 +1,6 @@
 package com.crafsed.sas.data
 
-data class QuestionData(
+data class QuizQuestionData(
     val number: Int,
     val question: String,
     val answers: List<String>,
