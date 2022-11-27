@@ -41,6 +41,7 @@ class Person(AbstractBaseUser):
     password    = models.CharField(max_length=120)
     email       = models.EmailField(max_length = 100, unique=True)
     is_lecturer = models.BooleanField(default= False)
+    scheduleId  = models.ForeignKey('Group', on_delete=models.CASCADE )
 
     USERNAME_FIELD = 'email'
     
@@ -57,4 +58,38 @@ class Quiz(models.Model):
     date        = models.DateTimeField(null=True, default=None)
     groups      = models.CharField(max_length=100)
 
+    
+class QuizAnswer(models.Model):
+    quiz    = models.ForeignKey('Quiz', on_delete=models.CASCADE)
+    answers = models.CharField(max_length=1024)
 
+class Group(models.Model):
+    api_id = models.CharField(max_length=16, unique=True)
+    name = models.CharField(max_length=16)
+
+
+class Lecture(models.Model):
+    lector      = models.ForeignKey('Person', on_delete=models.CASCADE)
+    checkInCode = models.CharField(max_length=8)
+    checkInActive   = models.BooleanField(default=False)
+    dateAndTime = models.DateTimeField()
+    lectorSSID  = models.CharField(max_length=128, null=True, default=None)
+    test        = models.ManyToManyField('Quiz')
+
+
+class AnonQuestion(models.Model):
+    question    = models.CharField(max_length=256)
+    datetime    = models.DateTimeField()
+    leccture    = models.CharField(max_length=16, null=True, default=None)
+
+class Attendance(models.Model):
+    # checkIn = models.BooleanField(default=False)
+    student = models.ForeignKey('Person', on_delete=models.CASCADE)
+    lecture = models.ForeignKey('Lecture', on_delete=models.CASCADE)
+    test    = models.ManyToManyField('Quiz', null=True)
+    class Meta:
+        unique_together = ('student', 'lecture')
+
+class MySchedule(models.Model):
+    userId  = models.ForeignKey('Person', on_delete=models.CASCADE)
+    sched   = models.CharField(max_length=1024)

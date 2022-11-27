@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,16 +42,20 @@ INSTALLED_APPS = [
     'rest_framework',
     'SAS',
     'rest_framework_simplejwt',
+    "corsheaders",
+    # "scrap_moodle",
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'SAS.urls'
@@ -149,3 +154,16 @@ REST_FRAMEWORK = {
 }
 
 AUTH_USER_MODEL = 'SAS.Person'
+CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect 
+CORS_ALLOW_CREDENTIALS = True 
+CORS_ALLOWED_ORIGINS = [ 
+ 'http://localhost:8080', 
+] # If this is used, then not need to use `CORS_ALLOW_ALL_ORIGINS = True` 
+CORS_ALLOWED_ORIGIN_REGEXES = [ 
+ 'http://localhost:8080', 
+]
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+}
