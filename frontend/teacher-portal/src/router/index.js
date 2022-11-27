@@ -58,6 +58,7 @@ const router = new VueRouter({
 // })
 
 router.beforeEach((to, from, next) => {
+    // store.commit('verifyRefreshToken')
     if (store.state.isAuthenticated) {
         store.commit('verifyRefreshToken')
     }

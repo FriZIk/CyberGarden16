@@ -1,7 +1,7 @@
 <template>
     <b-container class="align-items-center">
-        <b-row class="align-items-center" align-v="center">
-            <b-col class="align-self-center align-items-center">
+        <b-row>
+            <b-col>
                 <h3 class="text-center">{{ quiz_item.quiz_name }}</h3>
                 <!-- <p>Вопросы: {{ quiz_item.questions }}</p> -->
                 
@@ -30,8 +30,28 @@
                     </b-card-text>
                 </b-card>
             </b-col>
-            <b-col class="align-self-center align-items-center">
-                <p>Анонимные вопросы</p>
+            <b-col>
+                <h3 class="text-center">Анонимные вопросы</h3>
+                <b-card
+                    v-for="(anon_question, i) in anon_questions"
+                    :key="i"
+                    class="anon-question-card"
+                >
+                    <b-card-text>
+                        <b-row>
+                            <b-col>
+                                <img left id="anon-user-profile-logo" :src="anon_user_profile_logo"/>
+                            </b-col>
+                            <b-col cols="9">
+                                <p>{{ anon_question.question }}</p>
+                            </b-col>
+                        </b-row>
+                    </b-card-text>
+
+                    <template #footer>
+                        <em>{{ new Date(anon_question.datetime).toLocaleString("ru-RU") }}</em>
+                    </template>
+                </b-card>
             </b-col>
         </b-row>
     </b-container>
@@ -42,8 +62,10 @@ export default {
     name: "QuizView",
     data() {
         return {
+            anon_user_profile_logo: require('@/assets/anon_user_profile_logo.png'),
             selected: 'true',
-            quiz_item: {}
+            quiz_item: {},
+            anon_questions: [],
         }
     },
     mounted() {
@@ -57,6 +79,13 @@ export default {
         this.quiz_item.questions = JSON.parse(this.quiz_item.questions)
 
         localStorage.setItem('quiz_item', '');
+
+        // Получить из локалсторейджа значения текущих анонимных вопросов anon_questsions. Если оно пустое, то ничего делать не нужно
+        if (localStorage.getItem('anon_questions') !== '') {
+            this.anon_questions = JSON.parse(localStorage.getItem('anon_questions'))
+            
+            localStorage.setItem('anon_questions', '');
+        }
     },
     methods: {
         
@@ -68,4 +97,11 @@ export default {
 .question-card {
     margin-bottom: 0.4em;
 }
+
+#anon-user-profile-logo {
+    max-width: 2.7em;
+    height: auto;
+    border-radius: 50%;
+}
+
 </style>

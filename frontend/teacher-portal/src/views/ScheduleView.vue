@@ -104,14 +104,19 @@ export default {
                 { key: 'l7', label: '7-я 19:30-21:05', sortable: false, class: 'text-center' }
             ],
             clicked_lesson_item: {},
+            // Для квизов
             all_quizes: [],
             needed_quizes: [],
+            // Для анонимных вопросов
+            all_anon_questions: [],
+            needed_anon_questions: [],
         }
     },
     mounted() {
         document.title = 'Schedule | Teacher Portal'
         this.getTeacherSchedule()
         this.getAllQuizes()
+        this.getAllAnonQuestions()
     },
     methods: {
         ...mapMutations(['setUser',]),
@@ -123,7 +128,11 @@ export default {
             this.$router.push({ name: 'quizcreate' })
         },
         goQuizView(quiz) {
+            // Поместить в локалстордж нужный квиз.
             localStorage.setItem('quiz_item', JSON.stringify(quiz))
+
+            // Поместить в локалстодж нужные анонимные вопросы, относящиеся к выбранной паре
+            localStorage.setItem('anon_questions', JSON.stringify(this.needed_anon_questions))
 
             this.$router.push({ name: 'quizview' })
         },
@@ -136,6 +145,10 @@ export default {
         async getAllQuizes() {
             let response = await axios.get(`/getquiz/`)
             this.all_quizes = response.data
+        },
+        async getAllAnonQuestions() {
+            let response = await axios.get(`/getanonquestion/`)
+            this.all_anon_questions = response.data
         },
         async getTeacherSchedule() {
             const formData = {
@@ -278,6 +291,18 @@ export default {
                     }
                 }
             }
+
+            // распарсить все анонимные вопросы, найти нужные
+            // найти подходящие по дате квизы
+            
+            for (let i = 0; i < this.all_anon_questions.length; i++) {
+                // Проверка на дату
+                const d = new Date(this.all_anon_questions[i].datetime)
+                if (d_start.getTime() <= d.getTime() && d.getTime() <= d_end.getTime()) {
+                    this.needed_anon_questions.push(this.all_anon_questions[i])
+                }
+            }
+            
 
             this.showQuizListModal()
         },
