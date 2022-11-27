@@ -1,5 +1,5 @@
 <template>
-    <b-container class="align-items-center">
+    <b-container id="cc" class="align-items-center">
         <b-row>
             <b-col>
                 <h3 class="text-center">{{ quiz_item.quiz_name }}</h3>
@@ -69,6 +69,7 @@ export default {
         }
     },
     mounted() {
+        document.title = 'Просмотр опроса | Портал Преподавателя'
         // Получить из локалсторейджа значения текущего quiz_item. Если оно пустое, значит необходимо перейти обратно на страницу расписания
         if (localStorage.getItem('quiz_item') === '') {
             this.$router.push({ name: 'schedule' })
@@ -102,6 +103,10 @@ export default {
     max-width: 2.7em;
     height: auto;
     border-radius: 50%;
+}
+
+#cc {
+    margin-top: 1.6em;
 }
 
 </style>

@@ -6,6 +6,8 @@ import ScheduleView from '../views/ScheduleView.vue'
 import LoginView from '../views/LoginView.vue'
 import QuizCreate from '../views/QuizCreateView.vue'
 import QuizView from '../views/QuizView.vue'
+import MarksView from '../views/MarksView.vue'
+import AttendanceView from '../views/AttendanceView.vue'
 
 Vue.use(VueRouter)
 
@@ -30,6 +32,22 @@ const routes = [
       path: '/quizview',
       name: 'quizview',
       component: QuizView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/grade',
+      name: 'grade',
+      component: MarksView,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/attendance',
+      name: 'attendance',
+      component: AttendanceView,
       meta: {
         requiresAuth: true
       }

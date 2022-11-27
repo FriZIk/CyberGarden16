@@ -1,5 +1,5 @@
 <template>
-    <b-container class="align-items-center">
+    <b-container id="cc" class="align-items-center">
         <b-row class="align-items-center" align-v="center">
             <b-col class="align-self-center align-items-center">
                 <b-form @submit="onSubmitQuizForm" @reset="onResetQuizForm">
@@ -113,6 +113,7 @@ export default {
         }
     },
     mounted() {
+        document.title = 'Создание опроса | Портал Преподавателя'
         // Если нет предмета, то вернуть на страницу с расписанием
         // console.log(localStorage.getItem('lesson_item'))
         if (localStorage.getItem("lesson_item") === '') {
@@ -212,5 +213,7 @@ export default {
 </script>
 
 <style>
-
+#cc {
+    margin-top: 1.6em;
+}
 </style>

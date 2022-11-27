@@ -64,7 +64,7 @@ export default {
         }
     },
     mounted() {
-        document.title = 'Вход | Портал преподавателя'
+        document.title = 'Вход | Портал Преподавателя'
     },
     methods: {
         ...mapMutations(['setTokens',]),

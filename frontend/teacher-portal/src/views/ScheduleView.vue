@@ -113,7 +113,7 @@ export default {
         }
     },
     mounted() {
-        document.title = 'Schedule | Teacher Portal'
+        document.title = 'Расписание | Портал Преподавателя'
         this.getTeacherSchedule()
         this.getAllQuizes()
         this.getAllAnonQuestions()
@@ -323,6 +323,7 @@ export default {
 .schedule {
     margin-left: 2em;
     margin-right: 2em;
+    margin-top: 1.6em;
 }
 
 /* .needed-quiz {
