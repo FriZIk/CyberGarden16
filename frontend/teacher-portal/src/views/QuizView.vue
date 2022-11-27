@@ -1,76 +1,71 @@
-<template>            
-    <b-button v-b-modal.modal-prevent-closing>Добавить вопрос</b-button>
-    <!-- Под кнопкой список вопросов на текущий квиз
-    На другой половине экрана таблица со студентами, сколько кто набрал баллов за прохождение теста -->
-
-    <b-modal
-        id="modal-prevent-closing"
-        ref="modal"
-        title="Add new question"
-        @show="resetModal"
-        @hidden="resetModal"
-        @ok="handleOk"
-    >
-        <form ref="form" @submit.stop.prevent="handleSubmit">
-            <b-form-group
-                label="Question"
-                label-for="question-input"
-                invalid-feedback="Question is required"
-                :state="questionState"
-            >
-                <b-form-input
-                    id="question-input"
-                    v-model="question"
-                    :state="questionState"
-                    required
-                ></b-form-input>
-            </b-form-group>
-        </form>
-    </b-modal>
+<template>
+    <b-container class="align-items-center">
+        <b-row class="align-items-center" align-v="center">
+            <b-col class="align-self-center align-items-center">
+                <h3 class="text-center">{{ quiz_item.quiz_name }}</h3>
+                <!-- <p>Вопросы: {{ quiz_item.questions }}</p> -->
+                
+                <b-card
+                    v-for="(question, i) in quiz_item.questions"
+                    :key="i"
+                    class="question-card"
+                >
+                    <b-card-text>
+                        <b-form-group
+                            :label="question.question.questiontext"
+                            v-slot="{ ariaDescribedby }"
+                        >
+                            <b-form-radio
+                                v-for="(answer, j) in question.question.answers"
+                                :key="j"
+                                v-model="selected"
+                                :aria-describedby="ariaDescribedby"
+                                :name="answer.text"
+                                :value="answer.isCorrect"
+                                disabled
+                            >
+                                {{ answer.text }}
+                            </b-form-radio>
+                        </b-form-group>                
+                    </b-card-text>
+                </b-card>
+            </b-col>
+            <b-col class="align-self-center align-items-center">
+                <p>Анонимные вопросы</p>
+            </b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script>
 export default {
-    name: 'QuizView',
+    name: "QuizView",
     data() {
         return {
-            question: '',
-            questionState: null,
-            submittedQuestions: []
+            selected: 'true',
+            quiz_item: {}
         }
     },
-    methods: {
-        checkFormValidity() {
-            const valid = this.$refs.form.checkValidity()
-            this.questionState = valid
-            return valid
-        },
-        resetModal() {
-            this.question = ''
-            this.questionState = null
-        },
-        handleOk(bvModalEvent) {
-            // Prevent modal from closing
-            bvModalEvent.preventDefault()
-            // Trigger submit handler
-            this.handleSubmit()
-        },
-        handleSubmit() {
-            // Exit when the form isn't valid
-            if (!this.checkFormValidity()) {
-                return
-            }
-            // Push the questiontext to submitted questiontextes
-            this.submittedQuestions.push(this.question)
-            // Hide the modal manually
-            this.$nextTick(() => {
-                this.$bvModal.hide('modal-prevent-closing')
-            })
+    mounted() {
+        // Получить из локалсторейджа значения текущего quiz_item. Если оно пустое, значит необходимо перейти обратно на страницу расписания
+        if (localStorage.getItem('quiz_item') === '') {
+            this.$router.push({ name: 'schedule' })
         }
+
+        this.quiz_item = JSON.parse(localStorage.getItem('quiz_item'))
+        // Сразу сделать поле questions не строкой, а объектом
+        this.quiz_item.questions = JSON.parse(this.quiz_item.questions)
+
+        localStorage.setItem('quiz_item', '');
+    },
+    methods: {
+        
     },
 }
 </script>
 
-<style>
-
+<style scoped>
+.question-card {
+    margin-bottom: 0.4em;
+}
 </style>

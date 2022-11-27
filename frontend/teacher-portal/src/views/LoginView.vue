@@ -6,11 +6,11 @@
                     <div class="container">
                         <p id="login-title-text" class="text-center">Авторизация</p>
                         <br/>
-                        <div class="row justify-content-center">
+                        <div class="justify-content-center">
                             <b-form @submit="submitForm" class="mt-1">
                                 <b-form-group
                                     id="input-group-1"
-                                    label="Email"
+                                    label="Почта"
                                     label-for="input-1-password-loginform"
                                     description=""
                                 >
@@ -24,7 +24,7 @@
 
                                 <b-form-group
                                     id="input-group-2"
-                                    label="Login"
+                                    label="Пароль"
                                     label-for="input-2-password-loginform"
                                     description=""
                                 >
@@ -33,12 +33,12 @@
                                         type="password"
                                         v-model="form.password"
                                         required
-                                        placeholder="..."
+                                        placeholder="Password"
                                         class="mt-3"
                                     ></b-form-input>
                                 </b-form-group>
                                 <br />
-                                <b-button id="login-button" variant="success" class="button is-dark" @click="submitForm()">Login</b-button>
+                                <b-button id="login-button" variant="success" class="button is-dark" @click="submitForm()">Вход</b-button>
                             </b-form> 
                         </div>
                     </div>
@@ -64,7 +64,7 @@ export default {
         }
     },
     mounted() {
-        document.title = 'Login | Teacher Portal'
+        document.title = 'Вход | Портал преподавателя'
     },
     methods: {
         ...mapMutations(['setTokens',]),
@@ -101,3 +101,53 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+    #login-form-container {
+        height:100%;
+        width:45%;
+
+        text-align: center;
+
+        background-color: #FFFFFF;
+    }
+
+    #login-form-container > .container {
+        /* max-width: 100%;
+        
+        display: inline-block;
+        vertical-align: middle; */
+    }
+
+    #login-title-text {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 30px;
+        line-height: 120%;
+        /* identical to box height, or 36px */
+
+        text-transform: uppercase;
+
+        color: #000000;
+    }
+
+    #login-button {
+        width: 100%;
+        background: #4CAD1E !important;
+        border-radius: 20px !important;
+        border-color: #4CAD1E;
+        height: 3em;
+
+        font-family: 'Nunito' !important;
+        font-style: normal !important;
+        font-weight: 800 !important;
+        font-size: 15px !important;
+        line-height: 120% !important;
+        /* or 18px */
+
+        text-transform: uppercase;
+
+        color: #FFFFFF;
+    }
+</style>

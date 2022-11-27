@@ -1,57 +1,92 @@
 <template>
-    <div class="schedule">
-        <b-table
-        striped hover bordered
-        :items="items"
-        :fields="fields"
-        responsive="sm">
-            <template v-for="field in fields" v-slot:[`head(${field})`]="data">
-                <span v-html="data.field.label" ></span>
-            </template>
-            <template #cell(l1)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 1)">{{ data.item.l1 }}</a>
-            </template>
-            <template #cell(l2)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 2)">{{ data.item.l2 }}</a>
-            </template>
-            <template #cell(l3)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 3)">{{ data.item.l3 }}</a>
-            </template>
-            <template #cell(l4)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 4)">{{ data.item.l4 }}</a>
-            </template>
-            <template #cell(l5)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 5)">{{ data.item.l5 }}</a>
-            </template>
-            <template #cell(l6)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 6)">{{ data.item.l6 }}</a>
-            </template>
-            <template #cell(l7)="data">
-                <a href="#" @click="OpenModalQuizList(data.item, 7)">{{ data.item.l7 }}</a>
-            </template>
-        </b-table>
+    <b-container class="schedule" fluid="xs">
+        <b-row>
+            <b-col>
+                <b-table
+                striped
+                hover
+                bordered
+                
+                :items="items"
+                :fields="fields"
+                responsive="sm">
+                    <template v-for="field in fields" v-slot:[`head(${field})`]="data">
+                        <span v-html="data.field.label" ></span>
+                    </template>
+                    <template #cell(l1)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 1)" class="cell-lesson">{{ data.item.l1 }}</a>
+                    </template>
+                    <template #cell(l2)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 2)" class="cell-lesson">{{ data.item.l2 }}</a>
+                    </template>
+                    <template #cell(l3)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 3)" class="cell-lesson">{{ data.item.l3 }}</a>
+                    </template>
+                    <template #cell(l4)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 4)" class="cell-lesson">{{ data.item.l4 }}</a>
+                    </template>
+                    <template #cell(l5)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 5)" class="cell-lesson">{{ data.item.l5 }}</a>
+                    </template>
+                    <template #cell(l6)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 6)" class="cell-lesson">{{ data.item.l6 }}</a>
+                    </template>
+                    <template #cell(l7)="data">
+                        <a href="#" @click="OpenModalQuizList(data.item, 7)" class="cell-lesson">{{ data.item.l7 }}</a>
+                    </template>
+                </b-table>
 
-        <b-modal id="modal-scoped" scrollable centered button-size="sm" ref="quizlist-modal">
-            <template #modal-header="{ createnewquiz }">
-                <!-- Emulate built in modal header close button action -->
-                <b-button size="sm" variant="outline-success" @click="createNewQuiz()">
-                    Создать опрос
-                </b-button>
-                <h5>Список опросов</h5>
-            </template>
+                <b-modal id="modal-scoped" scrollable centered button-size="sm" ref="quizlist-modal" hide-footer>
+                    <template #modal-header="{ createnewquiz }">
+                        <!-- Emulate built in modal header close button action -->
+                        <b-button size="sm" variant="outline-success" @click="createNewQuiz()">
+                            Создать опрос
+                        </b-button>
+                        <h5>Список опросов</h5>
+                    </template>
 
+                    <b-container class="align-items-center">
+                        <b-row>
+                            <b-col>
+                                <!-- Список имеющихся квизов на эту пару для конкретно нужного мне преподавателя -->
+                                <!-- <a
+                                    v-for="(quiz, i) in needed_quizes"
+                                    :key="i"
+                                    @click="goQuizView(quiz)"
+                                    class="needed-quiz"
+                                >
+                                    {{ needed_quizes[i].quiz_name }}
+                                    <br />
+                                </a> -->
+                                <div class="btn-group-vertical justify-content-center" id="needed-quizes-button-group">
+                                    <b-button
+                                        v-for="(quiz, i) in needed_quizes"
+                                        :key="i"
+                                        @click="goQuizView(quiz)"
+                                        class="needed-quiz"
+                                        variant="outline-secondary"
+                                    >
+                                        {{ needed_quizes[i].quiz_name }}
+                                    </b-button>
+                                </div>
 
-            <template #modal-footer="{ cancel }">
-                <b-button size="sm" variant="danger" @click="cancel()">
-                    Закрыть
-                </b-button>
-            </template>
-        </b-modal>
-    </div>
+                                <!-- <template #modal-footer="{ cancel }">
+                                    <b-button size="sm" variant="danger" @click="cancel()">
+                                        Закрыть
+                                    </b-button>
+                                </template> -->
+                            </b-col>
+                        </b-row>
+                    </b-container>
+                </b-modal>
+            </b-col>
+        </b-row>
+    </b-container>
 </template>
 
 <script>
 import axios from 'axios'
+import { mapMutations } from 'vuex'
 /* eslint-disable */
 export default {
     name: 'ScheduleView',
@@ -59,31 +94,48 @@ export default {
         return {
             items: [],
             fields: [
-                { key: 'l0', label: 'Пары Время', sortable: false },
-                { key: 'l1', label: '1-я 08:00-09:35', sortable: false },
-                { key: 'l2', label: '2-я 09:50-11:25', sortable: false },
-                { key: 'l3', label: '3-я 11:55-13:30', sortable: false },
-                { key: 'l4', label: '4-я 13:45-15:20', sortable: false },
-                { key: 'l5', label: '5-я 15:50-17:25', sortable: false },
-                { key: 'l6', label: '6-я 17:40-19:15', sortable: false },
-                { key: 'l7', label: '7-я 19:30-21:05', sortable: false }
+                { key: 'l0', label: 'Пары Время', sortable: false, class: 'text-center' },
+                { key: 'l1', label: '1-я 08:00-09:35', sortable: false, class: 'text-center' },
+                { key: 'l2', label: '2-я 09:50-11:25', sortable: false, class: 'text-center' },
+                { key: 'l3', label: '3-я 11:55-13:30', sortable: false, class: 'text-center' },
+                { key: 'l4', label: '4-я 13:45-15:20', sortable: false, class: 'text-center' },
+                { key: 'l5', label: '5-я 15:50-17:25', sortable: false, class: 'text-center' },
+                { key: 'l6', label: '6-я 17:40-19:15', sortable: false, class: 'text-center' },
+                { key: 'l7', label: '7-я 19:30-21:05', sortable: false, class: 'text-center' }
             ],
             clicked_lesson_item: {},
+            all_quizes: [],
+            needed_quizes: [],
         }
     },
     mounted() {
         document.title = 'Schedule | Teacher Portal'
         this.getTeacherSchedule()
+        this.getAllQuizes()
     },
     methods: {
+        ...mapMutations(['setUser',]),
         createNewQuiz() {
-            console.log('create new quiz', this.clicked_lesson_item)
+            // console.log('create new quiz', this.clicked_lesson_item)
+            // Записать в локалстордж данные полученные по клику на предмет
+            localStorage.setItem("lesson_item", JSON.stringify(this.clicked_lesson_item))
+
+            this.$router.push({ name: 'quizcreate' })
+        },
+        goQuizView(quiz) {
+            localStorage.setItem('quiz_item', JSON.stringify(quiz))
+
+            this.$router.push({ name: 'quizview' })
         },
         showQuizListModal() {
             this.$refs['quizlist-modal'].show()
         },
         hideQuizListModal() {
             this.$refs['quizlist-modal'].hide()
+        },
+        async getAllQuizes() {
+            let response = await axios.get(`/getquiz/`)
+            this.all_quizes = response.data
         },
         async getTeacherSchedule() {
             const formData = {
@@ -94,6 +146,7 @@ export default {
                     'Content-Type': 'application/json',
                 }
             })
+            this.setUser(response.data)
             response = await axios.get(`http://165.22.28.187/schedule-api/?query=${response.data}`)
             response = await axios.get(`http://165.22.28.187/schedule-api/?group=${response.data.table.group}&week=${response.data.table.week}`)
             let tmp_items = []
@@ -195,8 +248,9 @@ export default {
             // console.log(lessonstart, lessonend)
             let d_start = new Date(`${year}-${month}-${day}T${lessonstart.split(':')[0]}:${lessonstart.split(':')[1]}:00`)
             let d_end = new Date(`${year}-${month}-${day}T${lessonend.split(':')[0]}:${lessonend.split(':')[1]}:00`)
-            let d_start_timestamp = d_start.getTime()
-            let d_end_timestamp = d_end.getTime()
+            let d_quiz_timestamp = new Date(`${year}-${month}-${day}T${lessonstart.split(':')[0]}:${lessonstart.split(':')[1]}:00`)
+            // let d_start_timestamp = d_start.getTime()
+            // let d_end_timestamp = d_end.getTime()
             // console.log(d_start)
             // console.log(d_end)
             // console.log(d_start_timestamp)
@@ -204,8 +258,25 @@ export default {
             
             this.clicked_lesson_item = {
                 lessonname: lessonname,
-                start_timestamp: d_start_timestamp,
-                end_timestamp: d_end_timestamp,
+                quiz_timestamp: d_quiz_timestamp,
+                // start_timestamp: d_start,
+                // end_timestamp: d_end,
+            }
+
+            // Отчистка списка квизов для каждого нового открытия модальной формы с квизами
+            this.needed_quizes = []
+
+            // распарсить все квизы, найти нужные
+            // найти подходящие по ключу group квизы
+            for (let i = 0; i < this.all_quizes.length; i++) {
+                // Проверим на groups
+                if (this.all_quizes[i].groups === this.clicked_lesson_item.lessonname) {
+                    // Проверка на дату
+                    const d = new Date(this.all_quizes[i].date)
+                    if (d_start.getTime() <= d.getTime() && d.getTime() <= d_end.getTime()) {
+                        this.needed_quizes.push(this.all_quizes[i])
+                    }
+                }
             }
 
             this.showQuizListModal()
@@ -218,4 +289,35 @@ export default {
 .table tbody tr th {
   text-align:center;
 }
+
+.cell-lesson {
+    text-decoration: none;
+    color: #161616;
+}
+
+.schedule {
+    margin-left: 2em;
+    margin-right: 2em;
+}
+
+/* .needed-quiz {
+    margin-bottom: 0.3em;
+    text-decoration: none;
+}
+
+.needed-quiz:hover, .needed-quiz:active {
+    background-color: #4CAD1E;
+} */
+
+.needed-quiz {
+    /* display: inline-block; */
+    margin-bottom: 0.3em;
+    /* min-width: 15em; */
+    min-width: 100%;
+}
+
+#needed-quizes-button-group {
+    min-width: 100% !important;
+}
+
 </style>

@@ -4,6 +4,8 @@ import store from '@/store'
 
 import ScheduleView from '../views/ScheduleView.vue'
 import LoginView from '../views/LoginView.vue'
+import QuizCreate from '../views/QuizCreateView.vue'
+import QuizView from '../views/QuizView.vue'
 
 Vue.use(VueRouter)
 
@@ -15,6 +17,22 @@ const routes = [
         meta: {
             requiresAuth: true
         }
+    },
+    {
+      path: '/quizcreate',
+      name: 'quizcreate',
+      component: QuizCreate,
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/quizview',
+      name: 'quizview',
+      component: QuizView,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
         path: '/login',

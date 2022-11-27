@@ -1,0 +1,9 @@
+// Then import Bootstrap and BootstrapVue SCSS files (order is important)
+// @import '../../node_modules/bootstrap/scss/bootstrap.scss';
+// @import '../../node_modules/bootstrap-vue/src/index.scss';
+
+@import url('https://fonts.googleapis.com/css?family=Inter');
+
+html, body {
+  font-family: 'Inter', sans-serif;
+}
